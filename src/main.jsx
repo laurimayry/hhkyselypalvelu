@@ -7,12 +7,10 @@ import Kyselyt from "./components/Kyselyt.jsx";
 import LisaaKysely from "./components/lisaaKysely.jsx";
 
 const router = createBrowserRouter([
-  // Import components that are used in routes
   {
     path: "/",
     element: <App />,
     children: [
-      // children are nested routes with a route
       {
         path: "kyselyt",
         element: <Kyselyt />,

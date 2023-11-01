@@ -1,7 +1,15 @@
+import { useEffect } from "react";
+
 function LisaaKysely() {
+  const backendUrl = "http://localhost:8080/kyselyLista";
+
+  useEffect(() => {
+    window.location.href = backendUrl;
+  }, []);
+
   return (
     <div>
-      <p>perkele</p>
+      <p>moi</p>
     </div>
   );
 }
