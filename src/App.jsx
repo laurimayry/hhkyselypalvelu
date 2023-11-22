@@ -1,11 +1,11 @@
 import "./App.css";
 import { Link, Outlet } from "react-router-dom";
-import LisaaKysely from "./components/lisaaKysely";
+import Kyselyt from "./components/Kyselyt.jsx";
 
 function App() {
   return (
     <div>
-      <LisaaKysely />
+      <Kyselyt />
     </div>
   );
 }
