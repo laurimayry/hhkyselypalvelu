@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
+//import { useParams } from "react-router-dom";
+
 
 function Kyselyt() {
   const backendUrl = "http://localhost:8080/kyselytREST";
   const [kysely, setKysely] = useState([]);
+  //const [kyselyId, setKyselyId] = useState('');
 
-  // eslint-disable-next-line no-unused-vars
-  const [kyselyId, setKyselyId] = useState(2);
+
+  //const { kyselyId } = useParams(); // Haetaan kyselyId reittiparametrina
+  //console.log("kyselyId:", kyselyId);
 
   useEffect(() => {
     const fetchKyselyt = () => {
-      const url = `${backendUrl}/${kyselyId}`;
-      fetch(url)
+      fetch(backendUrl)
         .then(response => {
           if (response.ok) {
             return response.json();
@@ -21,8 +24,8 @@ function Kyselyt() {
         .then(data => {
           console.log("Saatu data:", data); // Lisää tämä rivi nähdäksesi saadun datan
 
-          if (typeof data === 'object' && data !== null) {
-            setKysely([data]); // Huomaa, että käytetään silti taulukkoa käsittelyyn
+          if (Array.isArray(data)) {
+            setKysely(data); // Huomaa, että käytetään silti taulukkoa käsittelyyn
           } else {
             throw new Error("Haettu data ei ole odotettu muoto");
           }
@@ -31,9 +34,8 @@ function Kyselyt() {
           console.error("Virhe:", error);
         });
     };
-
     fetchKyselyt();
-  }, [kyselyId, backendUrl]); // Lisää fetchKyselyt ja backendUrl riippuvuuslistaan
+  }, [backendUrl]); // Lisää fetchKyselyt ja backendUrl riippuvuuslistaan
 
   return (
     <div>
