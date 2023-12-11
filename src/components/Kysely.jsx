@@ -1,20 +1,42 @@
-import Kyselyt from "./Kyselyt";
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 function Kysely() {
   const [kyselyId, setKyselyId] = React.useState('');
-  const [kyselyData, setKyselyData] = useState(null); // Lisätty state kyselyn datalle
+  const [kyselyData, setKyselyData] = useState(null);
   const { kyselyId: urlKyselyId } = useParams();
-  
+  const [vastaukset, setVastaukset] = useState([]);
 
+  const handleInputChange = (index, event) => {
+    const uudetVastaukset = [...vastaukset];
+    uudetVastaukset[index] = event.target.value;
+    setVastaukset(uudetVastaukset);
+  };
+
+  const handleSubmit = () => {
+    console.log(kyselyData);
+    fetch('http://localhost:8080/tallennaVastaus', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ vastaus: vastaukset.join(',') }),
+
+      
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Vastaukset tallennettu onnistuneesti: ', data);
+      })
+      .catch(error => {
+        console.error('Virhe tallennettaessa vastauksia: ', error);
+      });
+  };
 
   useEffect(() => {
     setKyselyId(urlKyselyId);
   }, [urlKyselyId]);
 
-
-  // Päivitetty KyselyHaku funktio hakemaan yksittäisen kyselyn tiedot
   useEffect(() => {
     if (kyselyId) {
       fetch(`http://localhost:8080/kysymyksetIdREST/${kyselyId}`)
@@ -35,29 +57,23 @@ function Kysely() {
     }
   }, [kyselyId]);
 
-  //toinen koukku sen vuoksi, 
-  //että kyselyId tulostuisi jo ensimmäisellä sivun avauksella/päivityksellä konsoliin
-  /*useEffect(() => {
-    KyselyHaku();
-  }, [kyselyId]);*/
-
-  /*function KyselyHaku() {
-    console.log(kyselyId);
-  }
-*/
   return (
     <div>
       {kyselyData && kyselyData.length > 0 ? (
         <div>
-          {/* Näytä yksittäisen kyselyn tiedot */}
           <p>Kysely ID: {kyselyData[0].kysely.kyselyId}</p>
 
           {kyselyData.map((kysymysObj, index) => (
-          <div key={index}>
-            <p> {index + 1}: {kysymysObj.kysymysteksti}</p>
-            <input type="text" />
-        </div>
+            <div key={index}>
+              <p>{index + 1}: {kysymysObj.kysymysteksti}</p>
+              <input
+                type="text"
+                value={vastaukset[index] || ''}
+                onChange={(event) => handleInputChange(index, event)}
+              />
+            </div>
           ))}
+          <button onClick={handleSubmit}>Submit</button>
         </div>
       ) : (
         <p>Ladataan kyselyn tietoja...</p>
