@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 //import { useParams } from "react-router-dom";
 
-
 function Kyselyt() {
   const backendUrl = "http://localhost:8080/kyselytREST";
   const [kysely, setKysely] = useState([]);
   //const [kyselyId, setKyselyId] = useState('');
-
 
   //const { kyselyId } = useParams(); // Haetaan kyselyId reittiparametrina
   //console.log("kyselyId:", kyselyId);
@@ -14,14 +12,14 @@ function Kyselyt() {
   useEffect(() => {
     const fetchKyselyt = () => {
       fetch(backendUrl)
-        .then(response => {
+        .then((response) => {
           if (response.ok) {
             return response.json();
           } else {
             throw new Error("Virhe tietojen hakemisessa");
           }
         })
-        .then(data => {
+        .then((data) => {
           console.log("Saatu data:", data); // Lisää tämä rivi nähdäksesi saadun datan
 
           if (Array.isArray(data)) {
@@ -30,7 +28,7 @@ function Kyselyt() {
             throw new Error("Haettu data ei ole odotettu muoto");
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Virhe:", error);
         });
     };

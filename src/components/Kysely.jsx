@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 function Kysely() {
-  const [kyselyId, setKyselyId] = React.useState('');
+  const [kyselyId, setKyselyId] = React.useState("");
   const [kyselyData, setKyselyData] = useState(null);
   const { kyselyId: urlKyselyId } = useParams();
   const [vastaukset, setVastaukset] = useState([]);
+  const [vastausolio, setVastausolio] = useState([{}]);
 
   const handleInputChange = (index, event) => {
     const uudetVastaukset = [...vastaukset];
@@ -14,23 +15,48 @@ function Kysely() {
   };
 
   const handleSubmit = () => {
-    console.log(kyselyData);
-    fetch('http://localhost:8080/tallennaVastaus', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ vastaus: vastaukset.join(',') }),
+    // Check if kyselyData is available and has the expected structure
+    if (kyselyData && kyselyData.length > 0 && kyselyData[0].kysely.kyselyId) {
+      // Map over each answer in the vastaukset array
+      vastaukset.forEach((vastaus, index) => {
+        const currentKysymysId = kyselyData[index].kysymysId;
 
-      
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Vastaukset tallennettu onnistuneesti: ', data);
-      })
-      .catch(error => {
-        console.error('Virhe tallennettaessa vastauksia: ', error);
+        // Create a new vastausolio for each answer
+        const currentVastausolio = {
+          vastaus: vastaus,
+          kysymys: { kysymysId: currentKysymysId },
+          kysely: { kyselyId: kyselyData[0].kysely.kyselyId },
+        };
+
+        console.log(currentVastausolio);
+
+        // Send a separate fetch request for each answer
+        fetch("http://localhost:8080/tallennaVastaus", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(currentVastausolio),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(
+              `Vastaus ${index + 1} tallennettu onnistuneesti: `,
+              data
+            );
+          })
+          .catch((error) => {
+            console.error(
+              `Virhe tallennettaessa vastausta ${index + 1}: `,
+              error
+            );
+          });
       });
+    } else {
+      console.log("Data not available yet. Please wait.");
+    }
+
+    setVastaukset("");
   };
 
   useEffect(() => {
@@ -40,18 +66,18 @@ function Kysely() {
   useEffect(() => {
     if (kyselyId) {
       fetch(`http://localhost:8080/kysymyksetIdREST/${kyselyId}`)
-        .then(response => {
+        .then((response) => {
           if (response.ok) {
             return response.json();
           } else {
             throw new Error("Virhe tietojen hakemisessa");
           }
         })
-        .then(data => {
+        .then((data) => {
           console.log("Saatu kyselydata:", data);
           setKyselyData(data);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Virhe:", error);
         });
     }
@@ -65,10 +91,12 @@ function Kysely() {
 
           {kyselyData.map((kysymysObj, index) => (
             <div key={index}>
-              <p>{index + 1}: {kysymysObj.kysymysteksti}</p>
+              <p>
+                {index + 1}: {kysymysObj.kysymysteksti}
+              </p>
               <input
                 type="text"
-                value={vastaukset[index] || ''}
+                value={vastaukset[index] || ""}
                 onChange={(event) => handleInputChange(index, event)}
               />
             </div>
