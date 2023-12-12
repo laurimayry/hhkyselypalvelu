@@ -85,6 +85,41 @@ function Kysely() {
 
   return (
     <div>
+      <style>
+        {`
+          button, input[type="text"] {
+            display: block;
+            color: #0044cc; /* Text color */
+            background-color: #f8f8f8; /* Background color */
+            border: 1px solid #dddddd; /* Border */
+            border-radius: 5px; /* Rounded corners */
+            padding: 8px 12px; /* Padding */
+            margin: 5px 0; /* Margin */
+            font-family: Arial, sans-serif; /* Font family */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Shadow */
+            transition: background-color 0.3s, color 0.3s; /* Color transition */
+            width: 100px; /* Width */
+            font-size: 15px; /* Font size */
+          }
+
+          button:hover {
+            background-color: #e9e9e9; /* Background color on hover */
+            color: #000000; /* Text color on hover */
+          }
+
+          input[type="text"] {
+            width: auto; /* Adjust width as needed */
+          }
+
+          label {
+            font-family: Arial, sans-serif; /* Font family */
+          }
+
+          div {
+            margin-bottom: 15px; /* Spacing between questions */
+          }
+        `}
+      </style>
       {kyselyData && kyselyData.length > 0 ? (
         <div>
           <p>Kysely ID: {kyselyData[0].kysely.kyselyId}</p>
